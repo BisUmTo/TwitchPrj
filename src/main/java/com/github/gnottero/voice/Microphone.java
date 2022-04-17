@@ -3,10 +3,6 @@ package com.github.gnottero.voice;
 import com.github.gnottero.TwitchProject;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-
 import javax.sound.sampled.*;
 
 public class Microphone implements Runnable {
@@ -28,12 +24,20 @@ public class Microphone implements Runnable {
                 is = new AudioInputStream(microphone);
             }
 
-
             double peak = 0f;
-            if (is.available() > 0) {
-                byte[] sample = is.readNBytes(is.available());
-                peak = Math.max(peak, Math.abs(media(sample)));
+            double rms  = 0f;
+            int l = is.available();
+            if (l > 0) {
+                byte[] buf = is.readNBytes(l);
+                for (int i = 0; i < l-1; ) {
+                    int sample = buf[i++] & 0xFF;
+                    sample |= buf[i++] << 8;
+                    peak = Math.max(Math.abs(sample / 32768.0), peak);
+                    rms += sample * sample;
+                }
+                rms = Math.sqrt(rms / l);
             }
+            if(LAST_PEAK > peak) peak = LAST_PEAK * 0.875;
             LAST_PEAK = peak;
         } catch (Exception e) {
             TwitchProject.LOGGER.error(e.getMessage(), e);
@@ -46,44 +50,6 @@ public class Microphone implements Runnable {
         }
     }
 
-//    @Override
-//    public void run() {
-//        TwitchProject.LOGGER.error("CIAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-//        int errors = 0;
-//        TargetDataLine microphone = null;
-//
-//        while (errors <= 10) {
-//            try {
-//                if (microphone == null) {
-//                    microphone = getLine();
-//                    if (microphone == null) throw new Exception("Microphone is null");
-//                    microphone.open(AUDIO_FORMAT, FRAME_SIZE);
-//                    microphone.start();
-//                }
-//
-//
-//                double peak = 0f;
-//                AudioInputStream is = new AudioInputStream(microphone);
-//                if (is.available() > 0) {
-//                    byte[] sample = is.readNBytes(FRAME_SIZE);
-//                    peak = Math.max(peak, Math.abs(media(sample)));
-//                    System.out.println("Peak: " + peak);
-//                    is.readAllBytes();
-//                }
-//                LAST_PEAK = peak;
-//                //Thread.sleep(50);
-//
-//            } catch (InterruptedException ignored) {
-//                ignored.printStackTrace();
-//                break;
-//            } catch (Exception e) {
-//                TwitchProject.LOGGER.error(e.getMessage());
-//                errors++;
-//                microphone = null;
-//            }
-//        }
-//    }
-
     private TargetDataLine getLine() {
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, AUDIO_FORMAT);
         try {
@@ -91,12 +57,5 @@ public class Microphone implements Runnable {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private double media(byte[] bytes) {
-        double sum = 0;
-        for (byte b : bytes) sum += b;
-
-        return sum / bytes.length;
     }
 }

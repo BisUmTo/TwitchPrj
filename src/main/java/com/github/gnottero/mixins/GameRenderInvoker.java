@@ -1,12 +1,12 @@
 package com.github.gnottero.mixins;
 
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(GameRenderer.class)
 public interface GameRenderInvoker {
-	@Invoker(value = "loadShader")
-	void invokeLoadShader(Identifier identifier);
+	@Invoker(value = "loadEffect")
+	void invokeLoadEffect(ResourceLocation resloc);
 }
