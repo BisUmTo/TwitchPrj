@@ -9,27 +9,28 @@
     "Gnottero"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/Gnottero/TwitchPrj",
+    "sources": "https://github.com/Gnottero/TwitchPrj"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/twitchprj/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
       "com.github.gnottero.TwitchProject"
+    ],
+    "client": [
+      "com.github.gnottero.TwitchProjectClient"
     ]
   },
 
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": "1.17.x",
-    "java": ">=16"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "minecraft": "1.19.x",
+    "java": ">=17",
+    "sctwitch": "*"
   }
 }
