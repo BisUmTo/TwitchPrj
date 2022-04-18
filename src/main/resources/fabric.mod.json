@@ -12,6 +12,7 @@
     "homepage": "https://github.com/Gnottero/TwitchPrj",
     "sources": "https://github.com/Gnottero/TwitchPrj"
   },
+  "mixins": ["twitchprj.mixins.json"],
 
   "license": "CC0-1.0",
   "icon": "assets/twitchprj/icon.png",
@@ -28,7 +29,6 @@
 
   "depends": {
     "fabricloader": ">=0.11.3",
-    "fabric": "*",
     "minecraft": "1.19.x",
     "java": ">=17",
     "sctwitch": "*"

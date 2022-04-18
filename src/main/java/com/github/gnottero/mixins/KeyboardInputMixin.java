@@ -39,8 +39,8 @@ public class KeyboardInputMixin extends Input {
 
         this.forwardImpulse = this.up == this.down ? 0.0F : (this.up ? 1.0F : -1.0F);
         this.leftImpulse = this.left == this.right ? 0.0F : (this.left ? 1.0F : -1.0F);
-        this.jumping = this.options.keyJump.isDown();
-        this.shiftKeyDown = this.options.keyJump.isDown();
+        this.jumping = TwitchProjectSettings.upsideDownEntities ? this.options.keyShift.isDown() : this.options.keyJump.isDown();
+        this.shiftKeyDown = TwitchProjectSettings.upsideDownEntities ? this.options.keyJump.isDown() : this.options.keyShift.isDown();
         if (slowDown) {
             this.leftImpulse = (float)((double)this.leftImpulse * 0.3D);
             this.forwardImpulse = (float)((double)this.forwardImpulse * 0.3D);

@@ -38,4 +38,17 @@ public class TwitchProjectSettings {
     )
     public static boolean microphoneNoiseLogger = false;
 
+    @Rule(
+            desc = "Solid collision Entity",
+            category = {}
+    )
+    public static boolean solidCollisionEntity = false;
+
+    @Rule(
+            desc = "Upside Down Entities",
+            category = {}
+    )
+    public static boolean upsideDownEntities = false;
+
+
 }

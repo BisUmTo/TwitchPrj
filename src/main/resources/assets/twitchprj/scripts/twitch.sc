@@ -143,12 +143,11 @@ __on_twitch_custom_reward(player, actor, message, badges, subscriptionMonths, cu
         ),
         customRewardId == 1000,
         (
-            modify(player, 'tag', 'gn.apply_shader');
+            modify(player, 'tag', 'gn.flip');
             global_prev_pos = pos(player);
             schedule(1200, _(outer(player)) -> (
                     apply_shader(player, null);
-                    modify(player, 'clear_tag', 'gn.apply_shader');
-                    run('carpet invertControlsDirection 0');
+                    modify(player, 'clear_tag', 'gn.flip');
                 );
             );
         ),
@@ -228,9 +227,8 @@ __on_tick() -> (
                     modify(phantom, 'yaw', query(_, 'yaw'));
                 )
             );
-            if(query(_, 'has_tag', 'gn.apply_shader'),
-                apply_shader(_, null);
-                run('carpet invertControlsDirection 2');
+            if(query(_, 'has_tag', 'gn.flip'),
+                apply_shader(_, 'flip');
             );
             if(query(_, 'player_type') != 'fake',
                 (
@@ -341,7 +339,6 @@ clear_effects(player) -> (
             modify(player, 'clear_tag', _);
         );
     );
-    run('carpet invertControlsDirection 0');
     apply_shader(player, null);
 );
 

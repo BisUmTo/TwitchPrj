@@ -15,6 +15,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
