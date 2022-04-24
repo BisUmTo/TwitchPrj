@@ -5,19 +5,13 @@ import carpet.CarpetServer;
 import carpet.script.CarpetExpression;
 import carpet.script.CarpetScriptServer;
 import carpet.script.bundled.BundledModule;
-import com.github.gnottero.mixins.GameRenderInvoker;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.io.IOUtils;
@@ -26,13 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 
 public class TwitchProject implements ModInitializer, CarpetExtension {
     public static final String MODID = "twitchprj";
@@ -41,7 +31,7 @@ public class TwitchProject implements ModInitializer, CarpetExtension {
     public static final Item POTATO_VILLAGER = new Item(new Item.Properties().stacksTo(1));
 
     public static void loadScripts(MinecraftServer server) {
-        //CarpetServer.scriptServer.addScriptHost(server.getCommandSource(), "master_script", null, true, true, false, null);
+        CarpetServer.scriptServer.addScriptHost(server.createCommandSourceStack(), "twitch", null, true, true, false, null);
     }
 
     private static BundledModule TwitchPrjDefaultScript(String scriptName, boolean isLibrary) {
@@ -66,7 +56,7 @@ public class TwitchProject implements ModInitializer, CarpetExtension {
     @Override
     public void onGameStarted() {
         CarpetServer.settingsManager.parseSettingsClass(TwitchProjectSettings.class);
-        CarpetScriptServer.registerBuiltInScript(TwitchPrjDefaultScript("master_script", false));
+        CarpetScriptServer.registerBuiltInScript(TwitchPrjDefaultScript("twitch", false));
     }
 
     @Override
@@ -93,10 +83,10 @@ public class TwitchProject implements ModInitializer, CarpetExtension {
                     player.level.gameEvent(player, GameEvent.ENTITY_SHAKE, pos);
                 });
             }
-            if(TwitchProjectSettings.microphoneNoiseLogger) {
+            if (TwitchProjectSettings.microphoneNoiseLogger) {
                 String message = String.format("Microphone Noise: %.02f", noise);
                 TwitchProject.LOGGER.log(Level.DEBUG, message);
-                player.displayClientMessage(new TextComponent(message), true);
+                player.displayClientMessage(Component.literal(message), true);
             }
         });
 

@@ -1,6 +1,7 @@
 package com.github.gnottero;
 
-import com.github.gnottero.mixins.GameRenderInvoker;
+import com.github.gnottero.playchannelhandlers.OptionsPlayChannelHandler;
+import com.github.gnottero.playchannelhandlers.ShadersPlayChannelHandler;
 import com.github.gnottero.voice.Microphone;
 import com.github.gnottero.voice.NoisePacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -18,13 +19,12 @@ public class TwitchProjectClient implements ClientModInitializer {
         scheduler.scheduleAtFixedRate(new Microphone(), 0, 50, TimeUnit.MILLISECONDS);
         scheduler.scheduleAtFixedRate(new NoisePacket(), 25, 50, TimeUnit.MILLISECONDS);
 
-        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation("carpet", "shaders"),
-                (client, handler, buf, responseSender) -> {
-                    ResourceLocation shaderResLoc = buf.readResourceLocation();
-                    client.execute(
-                            () -> ((GameRenderInvoker) client.gameRenderer).invokeLoadEffect(shaderResLoc)
-                    );
-                }
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation("purple_carpet", "shaders"),
+                new ShadersPlayChannelHandler()
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation("purple_carpet", "options"),
+                new OptionsPlayChannelHandler()
         );
     }
 }

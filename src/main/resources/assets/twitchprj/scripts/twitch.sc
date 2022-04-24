@@ -25,7 +25,10 @@ global_player_pos = [];
 // [Start] Twitch Events
 
 __on_twitch_follow(player, actor) -> (
-    spawn('armor_stand', pos(player), str('{CustomNameVisible:1b, CustomName: \'{"text": "%s"}\'}', actor));
+    spawn('frog', pos(player), str('{CustomNameVisible:1b, CustomName: \'{"text": "%s"}\', variant:"%s"}', 
+        actor,
+        rand(['minecraft:temperate','minecraft:warm','minecraft:cold'])
+    ));
 );
 
 __on_twitch_subscription(player, actor, message, tier, months, resubbed, streak, gifted, gifter) -> (
@@ -122,7 +125,8 @@ __on_streamlabs_donation(player, actor, message, amount, formattedAmount, curren
             // Warden
             loop(5,
                 pos = find_spawn_spot(player, 5, 2);
-                spawn('wither_skeleton', pos);
+                spawn('warden', pos);
+                // TODO: `/carpet microphoneEmitVibration 0.05`
             );
         )
     );
@@ -145,15 +149,19 @@ __on_twitch_custom_reward(player, actor, message, badges, subscriptionMonths, cu
         (
             modify(player, 'tag', 'gn.flip');
             global_prev_pos = pos(player);
+            client_option(player, 'invert_y_mouse', true);
+            run('/carpet upsideDownEntities true');
             schedule(1200, _(outer(player)) -> (
-                    apply_shader(player, null);
+                    client_shader(player, null);
                     modify(player, 'clear_tag', 'gn.flip');
+                    client_option(player, 'invert_y_mouse', false);
+                    run('/carpet upsideDownEntities false');
                 );
             );
         ),
         customRewardId == 3000,
         (
-            phantom = spawn('phantom', pos(player) + [0, query(player, 'eye_height') + 1, 0], '{NoAI:1b, Tags:["gn.tamed_phantom"]}');
+            phantom = spawn('allay', pos(player) + [0, query(player, 'eye_height') + 1, 0], '{NoAI:1b, Tags:["gn.tamed_phantom"]}');
             modify(player, 'mount', phantom);
         ),
         customRewardId == 5000,
@@ -228,7 +236,7 @@ __on_tick() -> (
                 )
             );
             if(query(_, 'has_tag', 'gn.flip'),
-                apply_shader(_, 'flip');
+                client_shader(_, 'flip');
             );
             if(query(_, 'player_type') != 'fake',
                 (
@@ -321,6 +329,12 @@ __on_player_connects(player) -> (
     clear_effects(player);
 );
 
+__on_close() -> (
+    for(player('all'),
+        clear_effects(_);
+    );
+);
+
 __on_start() -> (
     for(player('all'),
         clear_effects(_);
@@ -339,7 +353,7 @@ clear_effects(player) -> (
             modify(player, 'clear_tag', _);
         );
     );
-    apply_shader(player, null);
+    client_shader(player, null);
 );
 
 generate_random_pos(player, range, min_range) -> (
