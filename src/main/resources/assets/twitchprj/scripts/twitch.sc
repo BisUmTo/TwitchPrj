@@ -34,7 +34,9 @@ __on_twitch_follow(player, actor) -> (
 __on_twitch_subscription(player, actor, message, tier, months, resubbed, streak, gifted, gifter) -> (
     if(gifted || tier == 0 || tier == 1,
         (
-            spawn('creeper', pos(player));
+            spawn('creeper', pos(player), str('{CustomNameVisible:1b, CustomName: \'{"text": "%s"}\'}',
+                actor
+            ));
         ),
         tier == 2,
         (
@@ -43,7 +45,9 @@ __on_twitch_subscription(player, actor, message, tier, months, resubbed, streak,
         tier == 3,
         (
             pos = find_spawn_spot(player, 10, 5);
-            spawn('ravager', pos, '{Passengers:[{id:"minecraft:vindicator", Tags:["gn.potato_villager"], ActiveEffects:[{Id:14b,Amplifier:1b,Duration:1000000,ShowParticles:0b}], Passengers:[{id:"minecraft:armor_stand", ArmorItems:[{}, {}, {}, {id:"twitchprj:potato_villager", Count:1b}], Small:1b, Invisible:1b, Marker:1b}]}]}');
+            spawn('ravager', pos, str('{Passengers:[{id:"minecraft:vindicator", Tags:["gn.potato_villager"], ActiveEffects:[{Id:14b,Amplifier:1b,Duration:1000000,ShowParticles:0b}], Passengers:[{id:"minecraft:armor_stand", ArmorItems:[{}, {}, {}, {id:"twitchprj:potato_villager", Count:1b}], Small:1b, Invisible:1b, Marker:1b, CustomNameVisible:1b, CustomName: \'{"text": "%s"}\'}]}]}',
+                actor
+            ));
             sound('event.raid.horn', pos(player), 100, 1, 'master');
         )
     );
@@ -123,11 +127,11 @@ __on_streamlabs_donation(player, actor, message, amount, formattedAmount, curren
         amount >= 30,
         (
             // Warden
-            loop(5,
-                pos = find_spawn_spot(player, 5, 2);
-                spawn('warden', pos);
-                // TODO: `/carpet microphoneEmitVibration 0.05`
-            );
+            pos = find_spawn_spot(player, 5, 2);
+            spawn('warden', pos, str('{Brain:{memories:{"minecraft:dig_cooldown":{ttl:1200L,value:{}},"minecraft:is_emerging":{ttl:134L,value:{}}}}, CustomNameVisible:1b, CustomName:\'{"text":"%s"}\'}',
+                actor
+            ));
+            run('/carpet microphoneEmitVibration 0.05');
         )
     );
 );
@@ -161,31 +165,61 @@ __on_twitch_custom_reward(player, actor, message, badges, subscriptionMonths, cu
         ),
         customRewardId == 3000,
         (
-            phantom = spawn('allay', pos(player) + [0, query(player, 'eye_height') + 1, 0], '{NoAI:1b, Tags:["gn.tamed_phantom"]}');
+            phantom = spawn('allay', pos(player) + [0, query(player, 'eye_height') + 1, 0], str('{Attributes:[{Name:generic.movement_speed,Base:0}], Tags:["gn.tamed_phantom"],CustomNameVisible:1b, CustomName: \'{"text": "%s"}\'}',
+                actor
+            ));
             modify(player, 'mount', phantom);
         ),
         customRewardId == 5000,
         (
-            loop(10,
-                schedule(_ * 20, _(outer(player)) -> (
-                        spawn('falling_block', pos(player) + [0, 40, 0], '{BlockState:{Name:"minecraft:pointed_dripstone",Properties:{thickness:"tip",vertical_direction:"down"}},Silent:1b,Time:1,DropItem:0b,HurtEntities:1b,FallHurtMax:10,FallDistance:2f,FallHurtAmount:2f}');
-                        loop(50,
-                            pos = find_spawn_spot(player, 10, 0) + [0, 40, 0];
-                            spawn('falling_block', pos, '{BlockState:{Name:"minecraft:pointed_dripstone",Properties:{thickness:"tip",vertical_direction:"down"}},Silent:1b,Time:1,DropItem:0b,HurtEntities:1b,FallHurtMax:6,FallDistance:2f,FallHurtAmount:2f}');
+            loop(15,
+                schedule(_ * 20, _(outer(player),outer(actor)) -> (
+                        spawn('falling_block', pos(player) + [0, 20+rand(5), 0], str('{CustomName: \'{"text": "%s"}\',BlockState:{Name:"minecraft:pointed_dripstone",Properties:{thickness:"tip",vertical_direction:"down"}},Silent:1b,Time:1,DropItem:0b,HurtEntities:1b,FallHurtMax:10,FallDistance:2f,FallHurtAmount:2f}',actor));
+                        loop(100,
+                            pos = find_spawn_spot(player, 15, 0) + [0, 19+rand(6), 0];
+                            spawn('falling_block', pos, str('{CustomName: \'{"text": "%s"}\',BlockState:{Name:"minecraft:pointed_dripstone",Properties:{thickness:"tip",vertical_direction:"down"}},Silent:1b,Time:1,DropItem:0b,HurtEntities:1b,FallHurtMax:6,FallDistance:2f,FallHurtAmount:2f}',actor));
                         );
                     );
                 );
             );
         ),
+        customRewardId == 10000,
+        (
+            // Evoca
+            enderman = spawn('enderman', find_spawn_spot(player, 10, 5), str('{CustomNameVisible:1b, CustomName: \'{"text": "%s"}\', Tags:["gn.enderman_ladro","gn.enderman_rincorre"],ActiveEffects:[{Id:11b,Amplifier:127b,Duration:20000000,ShowParticles:0b},{Id:1b,Amplifier:2b,Duration:20000000,ShowParticles:0b}], carriedBlockState:{Name:"moving_piston"}}',
+                actor
+            ));
+
+            // Despawn 1 minuto
+            schedule(60*20,_(outer(enderman))->modify(enderman,'remove'));
+
+            entity_event(enderman,'on_tick',_(e, outer(player))->(
+                // Prende il player
+                if(e~['has_scoreboard_tag','gn.enderman_rincorre'] && _euclidean(pos(player),pos(e))<2,
+                    modify(e, 'clear_tag', 'gn.enderman_rincorre');
+                    modify(player, 'mount', e)
+                );
+                // Corre verso il player
+                if(e~['has_scoreboard_tag','gn.enderman_ladro'] && !e~['has_scoreboard_tag','gn.enderman_rincorre'],
+                    v = pos(player) - pos(e);
+                    modify(e,'accelerate',v*0.02);
+                );
+                modify(e, 'dismount');
+            ));
+
+
+            endermite = spawn('endermite', [player~'x',1000,player~'z'], '{Silent:1b,PlayerSpawned:1b,ActiveEffects:[{Id:11b,Amplifier:127b,Duration:20000000,ShowParticles:0b},{Id:14b,Amplifier:127b,Duration:20000000,ShowParticles:0b}]}');
+            modify(endermite, 'mount', player)
+        ),
         customRewardId == 25000,
         (
-            run(str('player %s spawn in survival', actor));
+            run(str('player %s spawn in survival', 'BisUmTo'));
         ),
         customRewardId == 50000,
         (
             loop(50,
-                pos = find_spawn_spot(player, 10, 10);
-                spawn('chicken', pos, '{Passengers:[{id:"minecraft:zombie",IsBaby:1b,HandItems:[{id:"minecraft:iron_sword",Count:1b},{}]}]}');
+                pos = find_spawn_spot(player, 10, 5);
+                spawn('chicken', pos, '{IsChickenJockey:1b,Passengers:[{id:"minecraft:zombie",ArmorItems:[{},{},{},{id:"minecraft:oak_button",Count:1b}],ArmorDropChances:[0.085F,0.085F,0.085F,0.000F],IsBaby:1b,HandItems:[{id:"minecraft:iron_sword",Count:1b},{}]}]}');
             );
         )
     );
@@ -290,16 +324,25 @@ __on_tick() -> (
             angry_lama_ai(_, player('all'):0)
         );
     );
+    for(entity_selector('@e[type=enderman, tag=gn.enderman_ladro, tag=!gn.enderman_rincorre]'),
+        if(tick_time()%floor(20+rand(5))==0,
+            in_dimension(query(_, 'dimension'),
+                summon_water_bottle(_)
+            );
+        )
+    );
 );
 
+
+import('math','_euclidean');
 __on_player_breaks_block(player, block) -> (
     if(query(player, 'has_tag', 'gn.chain_break'),
         (
             modify(player, 'clear_tag', 'gn.chain_break');
             i = 0;
-            for(diamond(pos(block), 2, 2),
-                i = i + 1;
-                schedule(i, _(outer(_)) -> destroy(_));
+            for(diamond(pos(block), 4, 4),
+                d = _euclidean(pos(block), pos(_));
+                schedule(3*d+floor(rand(10)), _(outer(_)) -> if(rand(4-d),destroy(_)));
             );
         ),
         query(player, 'has_tag', 'gn.lava_block'),
@@ -339,6 +382,11 @@ __on_start() -> (
     for(player('all'),
         clear_effects(_);
     );
+);
+
+__on_player_rides(player, forward, strafe, jumping, sneaking)->if(
+    sneaking && (mob = player~'mount') != null && mob ~ ['has_scoreboard_tag','gn.enderman_ladro'],
+    schedule(1, _(outer(mob),outer(player))->modify(player, 'mount', mob))
 );
 
 // [End] Scarpet Events
@@ -452,5 +500,9 @@ angry_lama_ai(entity, player) -> (
         );
     );
 );
+
+summon_water_bottle(enderman) -> (
+    spawn('potion',pos(enderman)+[0,0.1,0], '{Motion: [0.0d, -0.09d, 0.0d], Invulnerable: 0b, Air: 300s, OnGround: 0b, PortalCooldown: 0, Rotation: [77.68712f, 45.47213f], FallDistance: 0.0f, Item: {id: "minecraft:splash_potion", Count: 1b, tag: {Potion: "minecraft:water"}}, HasBeenShot: 1b, Fire: -1s}')
+)
 
 // [End] Custom Function

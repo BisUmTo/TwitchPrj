@@ -11,6 +11,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -24,6 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
 
+import static carpet.script.CarpetScriptServer.registerBuiltInApp;
+import static carpet.script.Module.fromJarPath;
+
 public class TwitchProject implements ModInitializer, CarpetExtension {
     public static final String MODID = "twitchprj";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
@@ -34,20 +38,6 @@ public class TwitchProject implements ModInitializer, CarpetExtension {
         CarpetServer.scriptServer.addScriptHost(server.createCommandSourceStack(), "twitch", null, true, true, false, null);
     }
 
-    private static BundledModule TwitchPrjDefaultScript(String scriptName, boolean isLibrary) {
-        BundledModule module = new BundledModule(scriptName.toLowerCase(Locale.ROOT), null, false);
-        try {
-            module = new BundledModule(scriptName.toLowerCase(Locale.ROOT),
-                    IOUtils.toString(
-                            Objects.requireNonNull(BundledModule.class.getClassLoader().getResourceAsStream("assets/" + MODID + "/scripts/" + scriptName + (isLibrary ? ".scl" : ".sc"))),
-                            StandardCharsets.UTF_8
-                    ), isLibrary
-            );
-        } catch (NullPointerException | IOException ignored) {
-        }
-        return module;
-    }
-
     @Override
     public void scarpetApi(CarpetExpression expression) {
         TwitchProjectScarpet.apply(expression.getExpr());
@@ -56,7 +46,7 @@ public class TwitchProject implements ModInitializer, CarpetExtension {
     @Override
     public void onGameStarted() {
         CarpetServer.settingsManager.parseSettingsClass(TwitchProjectSettings.class);
-        CarpetScriptServer.registerBuiltInScript(TwitchPrjDefaultScript("twitch", false));
+        CarpetScriptServer.registerBuiltInApp(fromJarPath("assets/" + MODID + "/scripts/","twitch", false));
     }
 
     @Override

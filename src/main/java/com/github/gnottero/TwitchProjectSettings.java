@@ -50,5 +50,4 @@ public class TwitchProjectSettings {
     )
     public static boolean upsideDownEntities = false;
 
-
 }

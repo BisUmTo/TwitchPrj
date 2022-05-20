@@ -4,6 +4,7 @@
   "package": "com.github.gnottero.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "EnderManMixin",
     "EntityMixin"
   ],
   "client": [

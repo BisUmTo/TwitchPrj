@@ -1,0 +1,163 @@
+{
+    "alealeale":{
+        "sounds": [
+            {
+                "name":"alealeale",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:allattacco":{
+        "sounds": [
+            {
+                "name":"allattacco",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:dovecredidiandare":{
+        "sounds": [
+            {
+                "name":"dovecredidiandare",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:dovescappi":{
+        "sounds": [
+            {
+                "name":"dovescappi",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:fermati":{
+        "sounds": [
+            {
+                "name":"fermati",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:gallineattaccate":{
+        "sounds": [
+            {
+                "name":"gallineattaccate",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pigliatelo":{
+        "sounds": [
+            {
+                "name":"pigliatelo",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:potereredstone":{
+        "sounds": [
+            {
+                "name":"potereredstone",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:truffaldello":{
+        "sounds": [
+            {
+                "name":"truffaldello",
+                "stream": true
+            }
+        ]
+    },
+
+    "pesce_alependi":{
+        "sounds": [
+            {
+                "name":"pesce_alependi",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pesce_fresco":{
+        "sounds": [
+            {
+                "name":"pesce_fresco",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pesce_prendi":{
+        "sounds": [
+            {
+                "name":"pesce_prendi",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pesce_uova":{
+        "sounds": [
+            {
+                "name":"pesce_uova",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pesce_vabbeh":{
+        "sounds": [
+            {
+                "name":"pesce_vabbeh",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:pesce_vendo":{
+        "sounds": [
+            {
+                "name":"pesce_vendo",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:topo_dovescappi":{
+        "sounds": [
+            {
+                "name":"topo_dovescappi",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:topo_lanciamo":{
+        "sounds": [
+            {
+                "name":"topo_lanciamo",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:topo_lanciauova":{
+        "sounds": [
+            {
+                "name":"topo_lanciauova",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:topo_pigliatelo":{
+        "sounds": [
+            {
+                "name":"topo_pigliatelo",
+                "stream": true
+            }
+        ]
+    },
+    "twitchprg:topo_sbagliato":{
+        "sounds": [
+            {
+                "name":"topo_sbagliato",
+                "stream": true
+            }
+        ]
+    }
+}
